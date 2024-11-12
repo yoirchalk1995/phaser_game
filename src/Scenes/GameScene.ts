@@ -62,17 +62,14 @@ export default class GameScene extends Phaser.Scene {
       this.character.setVelocityY(-245)
     }
     if (this.character.body?.bottom === 300 && !this.spaceKey?.isDown) {
-      // When the character lands, resume the animation
-      this.character.anims.play("character_anim", true); // Resume the animation
-  }
+      this.character.anims.play("character_anim", true);
+    }
   }
 
   spawnTrolly() {
-    // Randomly decide between empty or full trolly
-    const isFull = Math.random() < 0.2; // 1 in 5 chance for a full trolly
+    const isFull = Math.random() < 0.2;
     const trollyImage = isFull ? 'full-trolly' : 'empty-trolly';
   
-    // Create the trolly at the right edge of the screen
     const trolly = this.physics.add.sprite(580,270,trollyImage).setScale(0.2).setFlipX(true);
     trolly.setVelocityX(-200)
     trolly.setBodySize(trolly.width-60,trolly.height)
