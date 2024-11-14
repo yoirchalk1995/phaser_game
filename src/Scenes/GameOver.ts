@@ -22,13 +22,15 @@ export default class GameOver extends Phaser.Scene{
 
     this.add.rectangle(0,0,gameWidth,gameHeight,0x000000, 0.5).setOrigin(0).setFillStyle(0xcccccc, 0.5)
 
-    this.add.text(gameWidth/2, gameHeight/2 -20, 'game over', {
+    this.add.text(gameWidth/2, gameHeight/2 -20, 'game over.', {
       fontSize: '20px',
-      color: '0x000000'
+      color: '0x000000',
+      fontStyle:'bold'
     }).setOrigin(0.5)
-    this.add.text(gameWidth/2, gameHeight/2 +10, 'press space to play again', {
+    this.add.text(gameWidth/2, gameHeight/2 +10, 'press space to play again.', {
       fontSize: '20px',
-      color: '0x000000'
+      color: '0x000000',
+      fontStyle:'bold'
     }).setOrigin(0.5)
 
     this.spaceKey = this.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE)

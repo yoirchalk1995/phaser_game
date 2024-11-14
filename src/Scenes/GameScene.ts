@@ -68,6 +68,7 @@ export default class GameScene extends Phaser.Scene {
 
   spawnTrolly() {
     const isFull = Math.random() < 0.2;
+    
     const trollyImage = isFull ? 'full-trolly' : 'empty-trolly';
   
     const trolly = this.physics.add.sprite(580,270,trollyImage).setScale(0.2).setFlipX(true);
@@ -77,6 +78,11 @@ export default class GameScene extends Phaser.Scene {
   
     // Add to the array of trolleys
     this.trolleys.push(trolly);
+    if(trolly.body.left<0){
+      trolly.destroy()
+    } 
+    console.log(this.trolleys.length);
+       
   }
 
   handleCollision(character: any, trolly: any) {
@@ -88,7 +94,8 @@ export default class GameScene extends Phaser.Scene {
         this.scoreText.setText(`Score: ${this.score}`); // Update score text immediately
         trolly.destroy(); // Destroy the trolly after collision
       } else if (trolly.texture.key === 'empty-trolly') {
-        this.scene.start('GameOver'); // End the game if it hits an empty trolly
+        this.scene.start('GameOver');
+        this.score = 0;
       }
     }
   }

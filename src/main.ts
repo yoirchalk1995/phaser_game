@@ -10,10 +10,7 @@ var config: Phaser.Types.Core.GameConfig = {
   height: 300,
   scene:[BootScene, GameScene, GameOver, WelcomeScene],
   physics: {
-    default:'arcade',
-    arcade: {
-      debug: true
-    }
+    default:'arcade'
   }
 }
 
