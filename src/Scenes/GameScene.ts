@@ -19,6 +19,7 @@ export default class GameScene extends Phaser.Scene {
     const gameWidth = 600;
     const aspectRatio = imageWidth / imageHeight;
     const newHeight = gameWidth / aspectRatio;
+    this.registry.set('score', 0);
 
     this.background = this.add.tileSprite(0, 0, imageWidth, imageHeight, 'background');
     this.background.setOrigin(0, 0);
@@ -63,7 +64,7 @@ export default class GameScene extends Phaser.Scene {
     }
     if (this.character.body?.bottom === 300 && !this.spaceKey?.isDown) {
       this.character.anims.play("character_anim", true);
-    }
+    }    
   }
 
   spawnTrolly() {
@@ -71,34 +72,54 @@ export default class GameScene extends Phaser.Scene {
     
     const trollyImage = isFull ? 'full-trolly' : 'empty-trolly';
   
-    const trolly = this.physics.add.sprite(580,270,trollyImage).setScale(0.2).setFlipX(true);
-    trolly.setVelocityX(-200)
-    trolly.setBodySize(trolly.width-60,trolly.height)
-    trolly.setOffset(-20,0)
+    const trolly = this.physics.add.sprite(580, 270, trollyImage).setScale(0.2).setFlipX(true);
+    trolly.setVelocityX(-200);
+    trolly.setBodySize(trolly.width - 60, trolly.height);
+    trolly.setOffset(-20, 0);
   
     // Add to the array of trolleys
     this.trolleys.push(trolly);
-    if(trolly.body.left<0){
-      trolly.destroy()
-    } 
+  
+    // Destroy trolly if it goes off-screen and remove it from the array
+    this.physics.world.on('worldstep', () => {
+      if (trolly.body?.right < 0) {
+        this.removeTrollyFromArray(trolly);
+        trolly.destroy();
+      }
+    });
+  
     console.log(this.trolleys.length);
-       
   }
-
+  
   handleCollision(character: any, trolly: any) {
-    // Type guard to ensure both objects are actually Sprites
     if (character instanceof Phaser.Physics.Arcade.Sprite && trolly instanceof Phaser.Physics.Arcade.Sprite) {
-      // Check if the trolly is a "full-trolly" or "empty-trolly"
+  
       if (trolly.texture.key === 'full-trolly') {
-        this.score += 1; // Increase score for full trolly
-        this.scoreText.setText(`Score: ${this.score}`); // Update score text immediately
-        trolly.destroy(); // Destroy the trolly after collision
+        this.score += 1;
+        trolly.setFlipX(false);
+        this.tweens.add({
+          targets: trolly,
+          alpha: 0,
+          duration: 300,
+          onComplete: () => {
+            this.removeTrollyFromArray(trolly);
+            trolly.destroy();
+          }
+        });
+        this.scoreText.setText(`Score: ${this.score}`);
       } else if (trolly.texture.key === 'empty-trolly') {
         this.scene.start('GameOver');
+        this.registry.set('score', this.score);
         this.score = 0;
+        this.trolleys = []
       }
     }
   }
   
-
+  removeTrollyFromArray(trolly: Phaser.Physics.Arcade.Sprite) {
+    const index = this.trolleys.indexOf(trolly);
+    if (index !== -1) {
+      this.trolleys.splice(index, 1);
+    }
+  }
 }
